@@ -8,6 +8,7 @@ cap = cv2.VideoCapture(0)
 # we should later use our own modul
 
 mpHands = mp.solutions.hands
+mpDraw = mp.solutions.drawing_utils
 
 #paramteres of Hands() -> static_image_mode when True it detects all the time so really slow
 # max_num_hands -> self explenatory
@@ -21,13 +22,38 @@ hands = mpHands.Hands(
     min_tracking_confidence=0.5
 )
 
+prev_Time = 0
+curr_Time = 0
+
 while True:
     success, img = cap.read()
     imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB) # we want to convert to rgb bc hands only uses rgb imgs
     result = hands.process(imgRGB)
 
-    print(result.multi_hand_landmarks)
+    #print(result.multi_hand_landmarks)
+
+    if result.multi_hand_landmarks:
+        for handLms in result.multi_hand_landmarks:
+
+            for id, lm in enumerate(handLms.landmark):
+                
+                height, width, channels = img.shape
+                cx, cy = int(lm.x *width), int(lm.y * height)
+                print(id,cx, cy)
+
+                if id == 0:
+                    cv2.circle(img, (cx,cy), 25 , (255,0,255), cv2.FILLED)
+
+            mpDraw.draw_landmarks(img, handLms, mpHands.HAND_CONNECTIONS)
+
+    curr_Time = time.time()
+    fps = 1/(curr_Time-prev_Time)
+    prev_Time = curr_Time
+
+    cv2.putText(img, str(int(fps)), (10,30), cv2.FONT_HERSHEY_COMPLEX, 1, (255,0,255), 1)
 
     cv2.imshow("cam", img)
     cv2.waitKey(1)
+
+
 
