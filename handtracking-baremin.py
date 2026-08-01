@@ -22,6 +22,9 @@ hands = mpHands.Hands(
     min_tracking_confidence=0.5
 )
 
+prev_Time = 0
+curr_Time = 0
+
 while True:
     success, img = cap.read()
     imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB) # we want to convert to rgb bc hands only uses rgb imgs
@@ -32,6 +35,12 @@ while True:
     if result.multi_hand_landmarks:
         for handLms in result.multi_hand_landmarks:
             mpDraw.draw_landmarks(img, handLms, mpHands.HAND_CONNECTIONS)
+
+    curr_Time = time.time()
+    fps = 1/(curr_Time-prev_Time)
+    prev_Time = curr_Time
+
+    cv2.putText(img, str(int(fps)), (10,30), cv2.FONT_HERSHEY_COMPLEX, 1, (255,0,255), 1)
 
     cv2.imshow("cam", img)
     cv2.waitKey(1)
