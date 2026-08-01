@@ -31,7 +31,7 @@ while True:
 
     if result.multi_hand_landmarks:
         for handLms in result.multi_hand_landmarks:
-            mpDraw.draw_landmarks(img, handLms)
+            mpDraw.draw_landmarks(img, handLms, mpHands.HAND_CONNECTIONS)
 
     cv2.imshow("cam", img)
     cv2.waitKey(1)
