@@ -8,6 +8,7 @@ cap = cv2.VideoCapture(0)
 # we should later use our own modul
 
 mpHands = mp.solutions.hands
+mpDraw = mp.solutions.drawing_utils
 
 #paramteres of Hands() -> static_image_mode when True it detects all the time so really slow
 # max_num_hands -> self explenatory
@@ -26,8 +27,14 @@ while True:
     imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB) # we want to convert to rgb bc hands only uses rgb imgs
     result = hands.process(imgRGB)
 
-    print(result.multi_hand_landmarks)
+    #print(result.multi_hand_landmarks)
+
+    if result.multi_hand_landmarks:
+        for handLms in result.multi_hand_landmarks:
+            mpDraw.draw_landmarks(img, handLms)
 
     cv2.imshow("cam", img)
     cv2.waitKey(1)
+
+
 
