@@ -4,9 +4,30 @@ import time
 
 cap = cv2.VideoCapture(0)
 
+# using hand detecing model for now
+# we should later use our own modul
+
+mpHands = mp.solutions.hands
+
+#paramteres of Hands() -> static_image_mode when True it detects all the time so really slow
+# max_num_hands -> self explenatory
+# min_detection_confidence -> defeault 50% below 50% it will do the detection agains
+# min_tracking_confidence -> defeault 50% below 50% it will retrack the hand
+
+hands = mpHands.Hands(
+    static_image_mode=False, 
+    max_num_hands=2, 
+    min_detection_confidence=0.5, 
+    min_tracking_confidence=0.5
+)
+
 while True:
     success, img = cap.read()
+    imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB) # we want to convert to rgb bc hands only uses rgb imgs
+    result = hands.process(imgRGB)
 
-    cv2.imshow("Image", img)
+    print(result.multi_hand_landmarks)
+
+    cv2.imshow("cam", img)
     cv2.waitKey(1)
 
