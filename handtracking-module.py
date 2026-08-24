@@ -23,6 +23,7 @@ class handDetector():
             for handLms in result.multi_hand_landmarks:
                 if draw:
                     self.mpDraw.draw_landmarks(img, handLms, self.mpHands.HAND_CONNECTIONS)
+        return img        
 
                 # for id, lm in enumerate(handLms.landmark):
                         
@@ -31,7 +32,7 @@ class handDetector():
                 #     print(id,cx, cy)
         
                 #     if id == 0:
-                #         cv2.circle(img, (cx,cy), 25 , (255,0,255), cv2.FILLED)
+                #         cv2.csircle(img, (cx,cy), 25 , (255,0,255), cv2.FILLED)
         
 
 
@@ -41,9 +42,12 @@ def main():
 
     cap = cv2.VideoCapture(0)
 
+    detector = handDetector()
+
 
     while True:
         success, img = cap.read()
+        img = detector.findHands(img)
     
     curr_Time = time.time()
     fps = 1/(curr_Time-prev_Time)
