@@ -11,29 +11,36 @@ class handDetector():
         self.trackConf = trackConf
 
         self.mpHands = mp.solutions.hands
-        self.hands = self.mpHands.Hands(self.mode, self.maxHands, 
-                                        self.detectionConf, self.trackConf)
+        self.hands = self.mpHands.Hands(static_image_mode=self.mode, 
+                                        max_num_hands=self.maxHands, 
+                                        min_detection_confidence=self.detectionConf, 
+                                        min_tracking_confidence=self.trackConf)
         self.mpDraw = mp.solutions.drawing_utils
 
     def findHands(self, img, draw = True):
         imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB) # we want to convert to rgb bc hands only uses rgb imgs
-        result = self.hands.process(imgRGB)
+        self.result = self.hands.process(imgRGB)
         
-        if result.multi_hand_landmarks:
-            for handLms in result.multi_hand_landmarks:
+        if self.result.multi_hand_landmarks:
+            for handLms in self.result.multi_hand_landmarks:
                 if draw:
                     self.mpDraw.draw_landmarks(img, handLms, self.mpHands.HAND_CONNECTIONS)
         return img        
 
-                # for id, lm in enumerate(handLms.landmark):
-                        
-                #     height, width, channels = img.shape
-                #     cx, cy = int(lm.x *width), int(lm.y * height)
-                #     print(id,cx, cy)
+                
+    def findPos(self, img, handNo = 0, draw =True):
+        lmList = []
+        if self.result.multi_hand_landmarks:  
+            myHand = self.result.multi_hand_landmarks[handNo]               
+            for id, lm in enumerate(myHand.landmark):    
+                             height, width, channels = img.shape
+                             cx, cy = int(lm.x *width), int(lm.y * height)
+                             lmList.append([id, cx, cy])
+                             if draw:    
+                              cv2.circle(img, (cx,cy), 5 , (255,0,255), cv2.FILLED)
+        return lmList
         
-                #     if id == 0:
-                #         cv2.csircle(img, (cx,cy), 25 , (255,0,255), cv2.FILLED)
-        
+
 
 
 def main():
@@ -48,15 +55,18 @@ def main():
     while True:
         success, img = cap.read()
         img = detector.findHands(img)
+        landList = detector.findPos(img)
+        if len(landList) != 0: 
+            print(landList[4])
     
-    curr_Time = time.time()
-    fps = 1/(curr_Time-prev_Time)
-    prev_Time = curr_Time
+        curr_Time = time.time()
+        fps = 1/(curr_Time-prev_Time)
+        prev_Time = curr_Time
 
-    cv2.putText(img, str(int(fps)), (10,30), cv2.FONT_HERSHEY_COMPLEX, 1, (255,0,255), 1)
+        cv2.putText(img, str(int(fps)), (10,30), cv2.FONT_HERSHEY_COMPLEX, 1, (255,0,255), 1)
 
-    cv2.imshow("cam", img)
-    cv2.waitKey(1)
+        cv2.imshow("cam", img)
+        cv2.waitKey(1)
 
 
 if __name__== "__main__":
