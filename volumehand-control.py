@@ -11,9 +11,23 @@ cap.set(3, wCam)
 cap.set(4, hCam)
 pTime = 0
 
+detector = htm.handDetector()
+
+
 
 while True:
     success, img = cap.read()
+
+    img = detector.findHands(img)
+    lmList = detector.findPos(img, draw = False)
+    if len(lmList) != 0:
+        print(lmList[4], lmList[8])
+
+        x1, y1 =  lmList[4][1], lmList[4][2]
+        x2, y2 =  lmList[8][1], lmList[8][2] 
+
+        cv2.circle(img, (x1,y1), 15 , (225,0,5), cv2.FILLED )
+        cv2.circle(img, (x2,y2), 15,  (225,0,5), cv2.FILLED )
 
     cTime = time.time()
     
