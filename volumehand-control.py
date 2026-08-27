@@ -2,7 +2,7 @@ import cv2
 import time
 import numpy as np
 import handtracking_module as htm
-
+import math
 
 wCam, hCam = 640, 480
 
@@ -11,7 +11,7 @@ cap.set(3, wCam)
 cap.set(4, hCam)
 pTime = 0
 
-detector = htm.handDetector()
+detector = htm.handDetector(detectionConf=0.8)
 
 
 
@@ -21,13 +21,26 @@ while True:
     img = detector.findHands(img)
     lmList = detector.findPos(img, draw = False)
     if len(lmList) != 0:
-        print(lmList[4], lmList[8])
+        #print(lmList[4], lmList[8])
 
         x1, y1 =  lmList[4][1], lmList[4][2]
         x2, y2 =  lmList[8][1], lmList[8][2] 
 
-        cv2.circle(img, (x1,y1), 15 , (225,0,5), cv2.FILLED )
-        cv2.circle(img, (x2,y2), 15,  (225,0,5), cv2.FILLED )
+        cx,cy = (x1+x2)//2, (y1+y2)//2
+
+        cv2.circle(img, (x1,y1), 10 , (225,0,5), cv2.FILLED )
+        cv2.circle(img, (x2,y2), 10,  (225,0,5), cv2.FILLED )
+        cv2.circle(img, (cx,cy), 10,  (225,0,5), cv2.FILLED )
+
+        cv2.line(img, (x1,y1), (x2,y2), (255,0,5), 3)
+
+        lenght = math.hypot(x2-x1, y2-y1)
+        print(lenght)
+
+
+        if lenght<25:
+            cv2.circle(img, (cx,cy), 10,  (0,255,0), cv2.FILLED )
+
 
     cTime = time.time()
     
