@@ -28,13 +28,13 @@ while True:
         break
 
     img = detector.findHands(img)
-    lmList = detector.findPos(img, draw=False)
+    lmList, bound = detector.findPos(img, draw=False)
     
     if len(lmList) != 0:
 
         # filter on size? TODO
 
-        
+        print(bound)
 
         # find distance -> methodize it TODO
 
