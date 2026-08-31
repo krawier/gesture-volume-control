@@ -31,6 +31,19 @@ while True:
     lmList = detector.findPos(img, draw=False)
     
     if len(lmList) != 0:
+
+        # filter on size? TODO
+
+        
+
+        # find distance -> methodize it TODO
+
+        #convert volume from lenght to actual volume -> reduce resolutin to make it smoother TODO
+
+        #check fingers up? TODO
+
+        #if pinky is down set volume
+
         x1, y1 = lmList[4][1], lmList[4][2]
         x2, y2 = lmList[8][1], lmList[8][2] 
 
