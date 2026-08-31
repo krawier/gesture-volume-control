@@ -53,7 +53,7 @@ class handDetector():
             bound = xmin, ymin, xmax, ymax
 
             if draw:
-                 cv2.rectangle(img,(bound[0],bound[1]),(bound[2],bound[3]),(0,255,0),2)
+                 cv2.rectangle(img,(bound[0]-20,bound[1]-20),(bound[2]+20,bound[3]+20),(0,255,0),2)
 
         return lmList, bound
         
