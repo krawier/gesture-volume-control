@@ -31,7 +31,7 @@ class handDetector():
     def findPos(self, img, handNo = 0, draw =True):
 
         bound = ()
-        
+
         xList = []
         yList = []
 
@@ -51,6 +51,9 @@ class handDetector():
             xmin, xmax = min(xList), max(xList)
             ymin, ymax = min(yList), max(yList)
             bound = xmin, ymin, xmax, ymax
+
+            if draw:
+                 cv2.rectangle(img,(bound[0],bound[1]),(bound[2],bound[3]),(0,255,0),2)
 
         return lmList, bound
         

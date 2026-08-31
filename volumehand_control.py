@@ -28,7 +28,7 @@ while True:
         break
 
     img = detector.findHands(img)
-    lmList, bound = detector.findPos(img, draw=False)
+    lmList, bound = detector.findPos(img, draw=True)
     
     if len(lmList) != 0:
 
