@@ -29,16 +29,33 @@ class handDetector():
 
                 
     def findPos(self, img, handNo = 0, draw =True):
+
+        bound = ()
+
+        xList = []
+        yList = []
+
+
         lmList = []
         if self.result.multi_hand_landmarks:  
             myHand = self.result.multi_hand_landmarks[handNo]               
             for id, lm in enumerate(myHand.landmark):    
                              height, width, channels = img.shape
                              cx, cy = int(lm.x *width), int(lm.y * height)
+                             xList.append(cx)
+                             yList.append(cy)
                              lmList.append([id, cx, cy])
                              if draw:    
                               cv2.circle(img, (cx,cy), 5 , (255,0,255), cv2.FILLED)
-        return lmList
+
+            xmin, xmax = min(xList), max(xList)
+            ymin, ymax = min(yList), max(yList)
+            bound = xmin, ymin, xmax, ymax
+
+            if draw:
+                 cv2.rectangle(img,(bound[0]-20,bound[1]-20),(bound[2]+20,bound[3]+20),(0,255,0),2)
+
+        return lmList, bound
         
 
 
