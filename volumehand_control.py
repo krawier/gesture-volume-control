@@ -46,7 +46,13 @@ while True:
             #convert volume from lenght to actual volume -> reduce resolutin to make it smoother TODO
 
             volPer = np.interp(lenght, [30,250], [0,100])
+
+            smoothness = 5
+            volPer = smoothness * round(volPer/smoothness)
+
             volume.SetMasterVolumeLevelScalar(volPer/100, None)
+
+
             #check fingers up? TODO
 
             #if pinky is down set volume
