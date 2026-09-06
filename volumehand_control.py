@@ -45,18 +45,18 @@ while True:
 
             #convert volume from lenght to actual volume -> reduce resolutin to make it smoother TODO
 
+            volPer = np.interp(lenght, [30,250], [0,100])
+            volume.SetMasterVolumeLevelScalar(volPer/100, None)
             #check fingers up? TODO
 
             #if pinky is down set volume
 
 
 
-            vol = np.interp(lenght, [25, 200], [minVol, maxVol])
-            #print(vol)
-            volume.SetMasterVolumeLevel(float(vol), None)
+
 
             if lenght < 25:
-                cv2.circle(img, (lineInfo.cx, lineInfo.cy), 10, (0, 255, 0), cv2.FILLED)
+                cv2.circle(img, (lineInfo[4], lineInfo[5]), 10, (0, 255, 0), cv2.FILLED)
 
     cTime = time.time()
     if cTime - pTime > 0:
