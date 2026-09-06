@@ -13,7 +13,7 @@ cap.set(3, wCam)
 cap.set(4, hCam)
 pTime = 0
 
-detector = htm.handDetector(detectionConf=0.8)
+detector = htm.handDetector(detectionConf=0.8, maxHands=1)
 
 device = AudioUtilities.GetSpeakers()
 volume = device.EndpointVolume
@@ -50,20 +50,22 @@ while True:
             smoothness = 5
             volPer = smoothness * round(volPer/smoothness)
 
-            volume.SetMasterVolumeLevelScalar(volPer/100, None)
 
 
-            #check fingers up? TODO
             fingers = detector.fingersUp()
-            print(fingers)
+            #print(fingers)
             #if pinky is down set volume
+            if not fingers[4]:
+                        volume.SetMasterVolumeLevelScalar(volPer/100, None)
+                        cv2.circle(img, (lineInfo[4], lineInfo[5]), 10, (0, 255, 0), cv2.FILLED)
+
 
 
 
 
 
             if lenght < 25:
-                cv2.circle(img, (lineInfo[4], lineInfo[5]), 10, (0, 255, 0), cv2.FILLED)
+                cv2.circle(img, (lineInfo[4], lineInfo[5]), 10, (0, 0, 255), cv2.FILLED)
 
     cTime = time.time()
     if cTime - pTime > 0:
