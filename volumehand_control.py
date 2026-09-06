@@ -12,8 +12,9 @@ cap = cv2.VideoCapture(0)
 cap.set(3, wCam)
 cap.set(4, hCam)
 pTime = 0
+colorVol = (255,255,255)
 
-detector = htm.handDetector(detectionConf=0.8)
+detector = htm.handDetector(detectionConf=0.8, maxHands=1)
 
 device = AudioUtilities.GetSpeakers()
 volume = device.EndpointVolume
@@ -22,6 +23,8 @@ volRange = volume.GetVolumeRange()
 minVol = volRange[0]
 maxVol = volRange[1]
 area = 0
+volPer = 0
+volBar = 400
 
 while True:
     success, img = cap.read()
@@ -33,41 +36,53 @@ while True:
     
     if len(lmList) != 0:
 
-        # filter on size? TODO
-
         #print(bound)
         wB,hB = bound[2]-bound[0], bound[3]-bound[1]
         area = (wB*hB)//100
-        print(area)
+        #print(area)
 
         if 350<area<1000:
-            print("ye")
-            # find distance -> methodize it TODO
+            lenght, img, lineInfo = detector.findDistance(4,8,img)
+            
+
 
             #convert volume from lenght to actual volume -> reduce resolutin to make it smoother TODO
 
-            #check fingers up? TODO
+            volPer = np.interp(lenght, [50,250], [0,100])
+            volBar = np.interp(lenght, [50,250], [400,150])
+            smoothness = 5
+            volPer = smoothness * round(volPer/smoothness)
 
+
+
+            fingers = detector.fingersUp()
+            #print(fingers)
             #if pinky is down set volume
+            if not fingers[4]:
+                        volume.SetMasterVolumeLevelScalar(volPer/100, None)
+                        cv2.circle(img, (lineInfo[4], lineInfo[5]), 10, (0, 255, 0), cv2.FILLED)
+                        colorVol = (0,0,0)
+            else:
+                 colorVol = (255,255,255)
 
-            x1, y1 = lmList[4][1], lmList[4][2]
-            x2, y2 = lmList[8][1], lmList[8][2] 
 
-            cx, cy = (x1 + x2) // 2, (y1 + y2) // 2
 
-            cv2.circle(img, (x1, y1), 10, (225, 0, 5), cv2.FILLED)
-            cv2.circle(img, (x2, y2), 10, (225, 0, 5), cv2.FILLED)
-            cv2.circle(img, (cx, cy), 10, (225, 0, 5), cv2.FILLED)
-            cv2.line(img, (x1, y1), (x2, y2), (255, 0, 5), 3)
 
-            lenght = math.hypot(x2 - x1, y2 - y1)
 
-            vol = np.interp(lenght, [25, 200], [minVol, maxVol])
-            #print(vol)
-            volume.SetMasterVolumeLevel(float(vol), None)
+
+
 
             if lenght < 25:
-                cv2.circle(img, (cx, cy), 10, (0, 255, 0), cv2.FILLED)
+                cv2.circle(img, (lineInfo[4], lineInfo[5]), 10, (0, 0, 255), cv2.FILLED)
+
+
+        cv2.rectangle(img, (50, 150), (85, 400), (255, 255, 255), 3)
+        cv2.rectangle(img, (50, int(volBar)), (85, 400), (255, 255, 255), cv2.FILLED)
+        cv2.putText(img, f'Setting: {int(volPer)}%', (40, 450), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 255, 255), 3)
+
+
+    cVol = int(volume.GetMasterVolumeLevelScalar() * 100)
+    cv2.putText(img, f'Set: {int(cVol)}%', (40, 80), cv2.FONT_HERSHEY_COMPLEX, 1, colorVol, 3)
 
     cTime = time.time()
     if cTime - pTime > 0:
