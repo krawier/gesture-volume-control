@@ -17,6 +17,7 @@ class handDetector():
                                         min_detection_confidence=self.detectionConf, 
                                         min_tracking_confidence=self.trackConf)
         self.mpDraw = mp.solutions.drawing_utils
+        self.tipIds = [4, 8, 12, 16, 20]
 
     def findHands(self, img, draw = True):
         imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB) # we want to convert to rgb bc hands only uses rgb imgs
@@ -74,6 +75,24 @@ class handDetector():
 
             lenght = math.hypot(x2 - x1, y2 - y1)
             return lenght, img, [x1,y1,x2,y2, cx, cy]
+
+
+    def fingersUp(self):
+        fingers = []
+        
+        if self.lmList[self.tipIds[0]][1] < self.lmList[self.tipIds[0] - 1][1]:
+            fingers.append(1)
+        else:
+            fingers.append(0)
+            
+        for id in range(1, 5):
+            if self.lmList[self.tipIds[id]][2] < self.lmList[self.tipIds[id] - 2][2]:
+                fingers.append(1)
+            else:
+                fingers.append(0)
+                
+        return fingers
+
 
          
         

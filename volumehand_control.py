@@ -54,7 +54,8 @@ while True:
 
 
             #check fingers up? TODO
-
+            fingers = detector.fingersUp()
+            print(fingers)
             #if pinky is down set volume
 
 
