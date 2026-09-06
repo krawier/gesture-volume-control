@@ -48,8 +48,8 @@ while True:
 
             #convert volume from lenght to actual volume -> reduce resolutin to make it smoother TODO
 
-            volPer = np.interp(lenght, [30,250], [0,100])
-            volBar = np.interp(lenght, [30,250], [400,150])
+            volPer = np.interp(lenght, [50,250], [0,100])
+            volBar = np.interp(lenght, [50,250], [400,150])
             smoothness = 5
             volPer = smoothness * round(volPer/smoothness)
 
